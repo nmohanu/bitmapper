@@ -2,10 +2,13 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <cmath>
+#include <iostream>
 
 #include "program_state.hpp"
 
-const float ZOOM_MULT = 0.2f;
+const float ZOOM_MULT = 0.1f;
+const float MIN_ZOOMF = 0.01f;
 
 static void handle_dragging(sf::RenderWindow& w, sf::Event& e, ProgramState& s) {
 	sf::Vector2i drag_start;
@@ -31,8 +34,10 @@ static void handle_dragging(sf::RenderWindow& w, sf::Event& e, ProgramState& s) 
 
 static void handle_scroll(sf::Event& e, ProgramState& s) {
 	if (e.type == sf::Event::MouseWheelScrolled) {
-		s.cam.zoomf += e.mouseWheelScroll.delta * ZOOM_MULT;
-		s.cam.zoomf = std::max(0.1f, s.cam.zoomf);
+		s.cam.zoomf *= e.mouseWheelScroll.delta > 0 ? 1.06f : 0.94f;
+		s.cam.zoomf = std::max(MIN_ZOOMF, s.cam.zoomf);
+
+		std::cout << s.cam.zoomf << std::endl;
 	}
 }
 
